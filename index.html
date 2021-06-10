@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pixelator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet"> -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="styles/styles.css" />
+  </head>
+  <body>
+    <header id="header-parent">
+      <div id="pixelated-title">Pixelator</div>
+    </header>
+    <div id="image-container">
+      <div id="file-flex">
+        <input type="file" id="file-select" />
+      </div>
+      <div id="canvas-flex" class="canvas-border">
+        <canvas id="c" width="400" height="400" ></canvas>
+      </div>
+    <div id="flex-end"></div>
+    </div>
+    <script src="scripts/pixelator.js"></script>
+  </body>
+</html>
