@@ -30,21 +30,21 @@ const pixelator = (()=>{
      * rgba values for the surrounding pixels by
      * the rgba value of the first pixel in the iteration.
      */
-    const drawPixels = (image, width, height) => {
+    const drawPixels = (width, height) => {
         let boxSize = 5;
 
-        let imageWidth = image.width;
-        let imageHeight = image.height;
+        let imageWidth = originalImage.width;
+        let imageHeight = originalImage.height;
 
         let imageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
 
         let pixelData = imageData.data;
 
-        for(let y=0; y < height; y += boxSize ){
-            for(let x=0; x < width; x+= boxSize){
+        for(let y=0; y < imageHeight; y += boxSize ){
+            for(let x=0; x < imageWidth; x+= boxSize){
                 // each pixel is represented by four rgba values in the imageData.data Uint8ClampedArray array
                 // multiply by four to get the index for the next set of rgba values.
-                let index = (x + (y * width)) * 4;
+                let index = (x + (y * imageWidth)) * 4;
                 
                 ctx.fillStyle = `rgba(${pixelData[index]}, ${pixelData[index+1]}, ${pixelData[index+2]}, ${pixelData[index+3]})`;
                 let rectWidth = adjustDimension(x, boxSize, imageWidth);
@@ -80,10 +80,12 @@ const pixelator = (()=>{
       image.width = canvasWidth;
       image.height = canvasHeight;
   
+      originalImage = image
       ctx.drawImage(image, 0, 0, image.width, image.height);
-  
 
-      drawPixels(image, canvasWidth, canvasHeight);
+      let btn = document.getElementById('btn-pixelate')
+      btn.style.display = 'block';
+      btn.addEventListener('click', drawPixels, false)
   
     };
   
