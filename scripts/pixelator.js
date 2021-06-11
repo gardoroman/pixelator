@@ -1,7 +1,7 @@
 
 const pixelator = (()=>{
 
-    let canvas, ctx;
+    let canvas, ctx, originalImage;
     const init = ()=> {
       canvas = document.querySelector('canvas');
       ctx = canvas.getContext("2d");
@@ -14,8 +14,44 @@ const pixelator = (()=>{
       return scaledDim;
     };
 
-    const drawPixels = imageData => {
 
+    /**
+     * Adjust values that exceed dimensions of image
+     */
+    const adjustDimension = (coordinate, boxSize, dimension) => {
+        if(coordinate + boxSize > dimension){
+            return dimension - coordinate
+        }
+        return boxSize;
+    }
+
+    /**
+     * Loop through image array and overwrite the 
+     * rgba values for the surrounding pixels by
+     * the rgba value of the first pixel in the iteration.
+     */
+    const drawPixels = (image, width, height) => {
+        let boxSize = 5;
+
+        let imageWidth = image.width;
+        let imageHeight = image.height;
+
+        let imageData = ctx.getImageData(0, 0, imageWidth, imageHeight);
+
+        let pixelData = imageData.data;
+
+        for(let y=0; y < height; y += boxSize ){
+            for(let x=0; x < width; x+= boxSize){
+                // each pixel is represented by four rgba values in the imageData.data Uint8ClampedArray array
+                // multiply by four to get the index for the next set of rgba values.
+                let index = (x + (y * width)) * 4;
+                
+                ctx.fillStyle = `rgba(${pixelData[index]}, ${pixelData[index+1]}, ${pixelData[index+2]}, ${pixelData[index+3]})`;
+                let rectWidth = adjustDimension(x, boxSize, imageWidth);
+                let rectHeight = adjustDimension(y, boxSize, imageHeight);
+                ctx.fillRect(x,y, rectWidth, rectHeight);
+            }
+        }
     };
   
     const getImage = image => {
@@ -46,29 +82,26 @@ const pixelator = (()=>{
   
       ctx.drawImage(image, 0, 0, image.width, image.height);
   
-      let imageData = ctx.getImageData(0, 0, image.width, image.height);
+
+      drawPixels(image, canvasWidth, canvasHeight);
   
     };
   
     const handleFileSelect = evt => {
       const file = evt.target.files[0];
-  
-  
+    
       const reader = new FileReader();
       reader.onload = fileObject => {
         var data = fileObject.target.result;
-  
+
         // Create an image object
         var image = new Image();
         image.onload = function(){
-  
           window.imageSrc = this;
           getImage(window.imageSrc);
         }
   
-  
         image.src = data;
-        
       };
       reader.readAsDataURL(file)
     };
