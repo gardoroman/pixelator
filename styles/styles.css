@@ -43,4 +43,14 @@
 #flex-end{
     flex:1
 }
+
+#btn-pixelate {
+    margin-top: 20px;
+    display: none;
+}
+
+#btn-pixelate, #file-select{
+    float: left;
+    margin-left: 10px;
+}
   
