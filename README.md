@@ -8,6 +8,5 @@ alter the image.
 
 ## TODO
 
-* Add feature that allows user to pixelate a subsections of the image
 * Add a button to revert image back to original
 * Convert to a React project

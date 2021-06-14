@@ -45,6 +45,7 @@
 }
 
 #btn-pixelate {
+    clear: both;
     margin-top: 20px;
     display: none;
 }
