@@ -35,41 +35,47 @@ const pixelator = (()=>{
      * was called by the user selection of a portion of
      * the image.
      */
-    const drawPixels = (width, height) => {
-        let boxSize = 5;
+    
+    const drawPixels = (width, height, offSetX, offSetY) => {
+      let boxSize = 5;
+  
+      let imageData = ctx.getImageData(0, 0, width, height);
 
-        let selectionWidth = originalImage.width;
-        let selectionHeight = originalImage.height;
-
-        let imageData = ctx.getImageData(0, 0, selectionWidth, selectionHeight);
-
-        let pixelData = imageData.data;
-
-        for(let y=0; y < selectionHeight; y += boxSize ){
-            for(let x=0; x < selectionWidth; x += boxSize){
-                // each pixel is represented by four rgba values in the imageData.data Uint8ClampedArray array
-                // multiply by four to get the index for the next set of rgba values.
-                let index = (x + (y * selectionWidth)) * 4;
-                
-                ctx.fillStyle = `rgba(${pixelData[index]}, ${pixelData[index+1]}, ${pixelData[index+2]}, ${pixelData[index+3]})`;
-                let rectWidth = adjustDimension(x, boxSize, selectionWidth);
-                let rectHeight = adjustDimension(y, boxSize, selectionHeight);
-                ctx.fillRect(x,y, rectWidth, rectHeight);
-            }
-        }
-    };
+      let pixelData = imageData.data;
+  
+      for(let y = offSetY; y < height; y += boxSize){
+        for(let x = offSetX; x < width; x += boxSize){
+            // each pixel is represented by four rgba values in the imageData.data Uint8ClampedArray array
+            // multiply by four to get the index for the next set of rgba values.
+            let index = (x + (y * width)) * 4;
+            
+            ctx.fillStyle = `rgba(${pixelData[index]}, ${pixelData[index+1]}, ${pixelData[index+2]}, ${pixelData[index+3]})`;
+            let rectWidth = adjustDimension(x, boxSize, width);
+            let rectHeight = adjustDimension(y, boxSize, height);
+            ctx.fillRect(x, y, rectWidth, rectHeight);
+          }
+      }
+    };    
 
     const handleMouseUp = event => {
-    
-        let e = event;
-        let o = originalImage
-        console.log('hover hover')
+      partialSelection.upX = event.offsetX;
+      partialSelection.upY = event.offsetY;
+      let width = Math.abs(partialSelection.downX - event.offsetX)
+      let height = Math.abs(partialSelection.downY - event.offsetY)
+      let x = Math.min(partialSelection.downX, event.offsetX)
+      let y = Math.min(partialSelection.downY, event.offsetY)
+      drawPixels(width + x, height + y, x, y)
+    };
+  
+    const handleMouseDown = event => {
+        partialSelection.downX = event.offsetX;
+        partialSelection.downY = event.offsetY;
+    };
+
+    const handleClick = _event => {
+      drawPixels(originalImage.width, originalImage.height, 0, 0)
     }
 
-    const handleMouseDown = event => {
-        console.log(`x: ${event.x} y: ${event.y}`)
-    }
-  
     const getImage = image => {
       /* Note:
       The code below keeps the ratio of the image.
@@ -100,7 +106,7 @@ const pixelator = (()=>{
 
       let btn = document.getElementById('btn-pixelate')
       btn.style.display = 'block';
-      btn.addEventListener('click', drawPixels, false)
+      btn.addEventListener('click', handleClick, false)
 
       let canvasElement = document.getElementById('canvas-elem');
       canvasElement.addEventListener('mousedown', handleMouseDown, false);
